@@ -16,7 +16,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'category' => 'fe',
 	'shy' => 0,
 	'version' => '0.2.0',
-	'dependencies' => '',
+	'dependencies' => 'dyncss',
 	'conflicts' => '',
 	'priority' => '',
 	'loadOrder' => '',
@@ -34,6 +34,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'CGLcompliance_note' => '',
 	'constraints' => array(
 		'depends' => array(
+			'dyncss' => '0.2.0 - 0.2.99'
 		),
 		'conflicts' => array(
 		),
