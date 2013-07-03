@@ -1,7 +1,7 @@
 <?php
 
 /**
- * lessphp v0.3.8 - github
+ * lessphp v0.3.9
  * http://leafo.net/lessphp
  *
  * LESS css compiler, adapted from http://lesscss.org
@@ -38,7 +38,7 @@
  * handling things like indentation.
  */
 class lessc {
-	static public $VERSION = "v0.3.8";
+	static public $VERSION = "v0.3.9";
 	static protected $TRUE = array("keyword", "true");
 	static protected $FALSE = array("keyword", "false");
 
@@ -327,6 +327,9 @@ class lessc {
 						$parts[] = "($q[1])";
 					}
 					break;
+				case "variable":
+					$parts[] = $this->compileValue($this->reduce($q));
+				break;
 				}
 			}
 
@@ -434,7 +437,7 @@ class lessc {
 		foreach ($selectors as $s) {
 			if (is_array($s)) {
 				list(, $value) = $s;
-				$out[] = $this->compileValue($this->reduce($value));
+				$out[] = trim($this->compileValue($this->reduce($value)));
 			} else {
 				$out[] = $s;
 			}
@@ -630,6 +633,10 @@ class lessc {
 			}
 
 			foreach ($mixins as $mixin) {
+				if ($mixin === $block && !$args) {
+					continue;
+				}
+
 				$haveScope = false;
 				if (isset($mixin->parent->scope)) {
 					$haveScope = true;
@@ -894,6 +901,16 @@ class lessc {
 		return array("number", round($value), $arg[2]);
 	}
 
+	protected function lib_unit($arg) {
+		if ($arg[0] == "list") {
+			list($number, $newUnit) = $arg[2];
+			return array("number", $this->assertNumber($number),
+				$this->compileValue($this->lib_e($newUnit)));
+		} else {
+			return array("number", $this->assertNumber($arg), "");
+		}
+	}
+
 	/**
 	 * Helper function to get arguments for color manipulation functions.
 	 * takes a list that contains a color like thing and a percentage
@@ -1000,19 +1017,24 @@ class lessc {
 	}
 
 	// mixes two colors by weight
-	// mix(@color1, @color2, @weight);
+	// mix(@color1, @color2, [@weight: 50%]);
 	// http://sass-lang.com/docs/yardoc/Sass/Script/Functions.html#mix-instance_method
 	protected function lib_mix($args) {
-		if ($args[0] != "list" || count($args[2]) < 3)
+		if ($args[0] != "list" || count($args[2]) < 2)
 			$this->throwError("mix expects (color1, color2, weight)");
 
-		list($first, $second, $weight) = $args[2];
+		list($first, $second) = $args[2];
 		$first = $this->assertColor($first);
 		$second = $this->assertColor($second);
 
 		$first_a = $this->lib_alpha($first);
 		$second_a = $this->lib_alpha($second);
-		$weight = $weight[1] / 100.0;
+
+		if (isset($args[2][2])) {
+			$weight = $args[2][2][1] / 100.0;
+		} else {
+			$weight = 0.5;
+		}
 
 		$w = $weight * 2 - 1;
 		$a = $first_a - $second_a;
@@ -1114,7 +1136,7 @@ class lessc {
 	 * Expects H to be in range of 0 to 360, S and L in 0 to 100
 	 */
 	protected function toRGB($color) {
-		if ($color == 'color') return $color;
+		if ($color[0] == 'color') return $color;
 
 		$H = $color[1] / 360;
 		$S = $color[2] / 100;
@@ -1202,6 +1224,14 @@ class lessc {
 
 	protected function reduce($value, $forExpression = false) {
 		switch ($value[0]) {
+		case "interpolate":
+			$reduced = $this->reduce($value[1]);
+			$var = $this->compileValue($reduced);
+			$res = $this->reduce(array("variable", $this->vPrefix . $var));
+
+			if (empty($value[2])) $res = $this->lib_e($res);
+
+			return $res;
 		case "variable":
 			$key = $value[1];
 			if (is_array($key)) {
@@ -1477,7 +1507,7 @@ class lessc {
 		if (is_null($color)) {
 			$this->throwError('color expected for red()');
 		}
-		
+
 		return $color[1];
 	}
 
@@ -1486,7 +1516,7 @@ class lessc {
 		if (is_null($color)) {
 			$this->throwError('color expected for green()');
 		}
-		
+
 		return $color[2];
 	}
 
@@ -1495,7 +1525,7 @@ class lessc {
 		if (is_null($color)) {
 			$this->throwError('color expected for blue()');
 		}
-		
+
 		return $color[3];
 	}
 
@@ -2044,7 +2074,7 @@ class lessc_parser {
 	static protected $supressDivisionProps =
 		array('/border-radius$/i', '/^font$/i');
 
-	protected $blockDirectives = array("font-face", "keyframes", "page", "-moz-document");
+	protected $blockDirectives = array("font-face", "keyframes", "page", "-moz-document", "viewport", "-moz-viewport", "-o-viewport", "-ms-viewport");
 	protected $lineDirectives = array("charset");
 
 	/**
@@ -2575,6 +2605,9 @@ class lessc_parser {
 			$out = array("mediaExp", $feature);
 			if ($value) $out[] = $value;
 			return true;
+		} elseif ($this->variable($variable)) {
+			$out = array('variable', $variable);
+			return true;
 		}
 
 		$this->seek($s);
@@ -2628,11 +2661,9 @@ class lessc_parser {
 				continue;
 			}
 
-			if (in_array($tok, $rejectStrs)) {
-				$count = null;
+			if (!empty($rejectStrs) && in_array($tok, $rejectStrs)) {
 				break;
 			}
-
 
 			$content[] = $tok;
 			$this->count+= strlen($tok);
@@ -2708,10 +2739,10 @@ class lessc_parser {
 
 		$s = $this->seek();
 		if ($this->literal("@{") &&
-			$this->keyword($var) &&
+			$this->openString("}", $interp, null, array("'", '"', ";")) &&
 			$this->literal("}", false))
 		{
-			$out = array("variable", $this->lessc->vPrefix . $var);
+			$out = array("interpolate", $interp);
 			$this->eatWhiteDefault = $oldWhite;
 			if ($this->eatWhiteDefault) $this->whitespace();
 			return true;
@@ -2885,38 +2916,73 @@ class lessc_parser {
 		return false;
 	}
 
-	// a single tag
+	// a space separated list of selectors
 	protected function tag(&$tag, $simple = false) {
 		if ($simple)
-			$chars = '^,:;{}\][>\(\) "\'';
+			$chars = '^@,:;{}\][>\(\) "\'';
 		else
-			$chars = '^,;{}["\'';
+			$chars = '^@,;{}["\'';
+
+		$s = $this->seek();
 
 		if (!$simple && $this->tagExpression($tag)) {
 			return true;
 		}
 
-		$tag = '';
-		while ($this->tagBracket($first)) $tag .= $first;
+		$hasExpression = false;
+		$parts = array();
+		while ($this->tagBracket($first)) $parts[] = $first;
+
+		$oldWhite = $this->eatWhiteDefault;
+		$this->eatWhiteDefault = false;
 
 		while (true) {
 			if ($this->match('(['.$chars.'0-9]['.$chars.']*)', $m)) {
-				$tag .= $m[1];
+				$parts[] = $m[1];
 				if ($simple) break;
 
-				while ($this->tagBracket($brack)) $tag .= $brack;
-				continue;
-			} elseif ($this->unit($unit)) { // for keyframes
-				$tag .= $unit[1] . $unit[2];
+				while ($this->tagBracket($brack)) {
+					$parts[] = $brack;
+				}
 				continue;
 			}
+
+			if (isset($this->buffer[$this->count]) && $this->buffer[$this->count] == "@") {
+				if ($this->interpolation($interp)) {
+					$hasExpression = true;
+					$interp[2] = true; // don't unescape
+					$parts[] = $interp;
+					continue;
+				}
+
+				if ($this->literal("@")) {
+					$parts[] = "@";
+					continue;
+				}
+			}
+
+			if ($this->unit($unit)) { // for keyframes
+				$parts[] = $unit[1];
+				$parts[] = $unit[2];
+				continue;
+			}
+
 			break;
 		}
 
+		$this->eatWhiteDefault = $oldWhite;
+		if (!$parts) {
+			$this->seek($s);
+			return false;
+		}
 
-		$tag = trim($tag);
-		if ($tag == '') return false;
+		if ($hasExpression) {
+			$tag = array("exp", array("string", "", $parts));
+		} else {
+			$tag = trim(implode($parts));
+		}
 
+		$this->whitespace();
 		return true;
 	}
 
@@ -3004,7 +3070,7 @@ class lessc_parser {
 	protected function end() {
 		if ($this->literal(';')) {
 			return true;
-		} elseif ($this->count == strlen($this->buffer) || $this->buffer{$this->count} == '}') {
+		} elseif ($this->count == strlen($this->buffer) || $this->buffer[$this->count] == '}') {
 			// if there is end of file or a closing block next then we don't need a ;
 			return true;
 		}
