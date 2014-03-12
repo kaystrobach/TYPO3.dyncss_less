@@ -55,8 +55,8 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 		try {
 			$this->parser->setImportDirs(
 				array(
-					dirname($inputFilename),
-					PATH_site
+					dirname($inputFilename) => dirname($inputFilename),
+					PATH_site               => PATH_site
 				)
 			);
 			$this->parser->parseFile($preparedFilename);
