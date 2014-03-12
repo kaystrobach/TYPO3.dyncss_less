@@ -4,10 +4,17 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 	function __construct() {
 		// ensure no one else has loaded lessc already ;)
 		if(!class_exists('lessc')) {
-			include_once(t3lib_extMgm::extPath('dyncss_less') . 'Resources/Private/Php/less/lessc.inc.php');
+			include_once(t3lib_extMgm::extPath('dyncss_less') . 'Resources/Private/Php/less.php/Autoloader.php');
+			Less_Autoloader::register();
 		}
 		// build instance to usage
-		$this->parser = new lessc();
+		$this->parser = new Less_Parser(
+			array(
+				//'cache_dir'=>'/var/www/writable_folder',
+				'sourceMap' => true,
+
+			)
+		);
 	}
 	/**
 	 * @param $string
@@ -45,26 +52,15 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 	 * @param $cacheFilename
 	 */
 	protected function _compileFile($inputFilename, $preparedFilename, $outputFilename, $cacheFilename) {
-		//check for cache file
-		if(file_exists($cacheFilename)) {
-			$cache = unserialize(file_get_contents($cacheFilename));
-		} else {
-			$cache = $preparedFilename;
-		}
 		try {
-			$this->parser->setImportDir(
+			$this->parser->setImportDirs(
 				array(
 					dirname($inputFilename),
 					PATH_site
 				)
 			);
-			$newCache = $this->parser->cachedCompile($cache);
-			if((!is_array($cache)) ||  ($newCache["updated"] > $cache["updated"])) {
-				file_put_contents($cacheFilename,  serialize($newCache));
-				return $newCache['compiled'];
-			} else {
-				return false;
-			}
+			$this->parser->parseFile($preparedFilename);
+			return $this->parser->getCss();
 		} catch(Exception $e) {
 			return $e;
 		}
