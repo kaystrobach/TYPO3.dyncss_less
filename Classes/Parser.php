@@ -7,14 +7,16 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 			include_once(t3lib_extMgm::extPath('dyncss_less') . 'Resources/Private/Php/less.php/Autoloader.php');
 			Less_Autoloader::register();
 		}
-		// build instance to usage
-		$this->parser = new Less_Parser(
-			array(
-				//'cache_dir'=>'/var/www/writable_folder',
-				'sourceMap' => true,
 
-			)
+		$config = array(
+			//'cache_dir'=>'/var/www/writable_folder',
 		);
+
+		if($this->config['enableDebug']) {
+			$config['sourceMap'] = TRUE;
+		}
+
+		$this->parser = new Less_Parser($config);
 	}
 	/**
 	 * @param $string
