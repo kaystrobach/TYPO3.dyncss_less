@@ -1,6 +1,10 @@
 <?php
 
+/**
+ * @todo missing docblock
+ */
 class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
+
 	function __construct() {
 		// ensure no one else has loaded lessc already ;)
 		if(!class_exists('lessc')) {
@@ -18,10 +22,13 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 
 		$this->parser = new Less_Parser($config);
 	}
+
 	/**
 	 * @param $string
 	 * @param null $name
 	 * @return mixed
+	 *
+	 * @todo missing typehinting
 	 */
 	protected function _compile($string, $name = null) {
 		// TODO: Implement _compile() method.
@@ -30,6 +37,8 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 	/**
 	 * @param $string
 	 * @return mixed
+	 *
+	 * @todo missing typehinting
 	 */
 	protected function _prepareCompile($string) {
 		/**
@@ -52,6 +61,8 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 	 * @param $inputFilename
 	 * @param $outputFilename
 	 * @param $cacheFilename
+	 *
+	 * @todo missing typehinting
 	 */
 	protected function _compileFile($inputFilename, $preparedFilename, $outputFilename, $cacheFilename) {
 		try {
