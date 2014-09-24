@@ -7,8 +7,8 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 
 	function __construct() {
 		// ensure no one else has loaded lessc already ;)
-		if(!class_exists('lessc')) {
-			include_once(t3lib_extMgm::extPath('dyncss_less') . 'Resources/Private/Php/less.php/Autoloader.php');
+		if(!class_exists('Less_Cache')) {
+			require_once(t3lib_extMgm::extPath('dyncss_less') . 'Resources/Private/Php/less.php/Autoloader.php');
 			Less_Autoloader::register();
 		}
 
@@ -20,7 +20,18 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 			$config['sourceMap'] = TRUE;
 		}
 
-		$this->parser = new Less_Parser($config);
+		$this->parser = NULL;
+	}
+
+	/**
+	 * @param $string
+	 * @param null $name
+	 * @return mixed
+	 *
+	 * @todo add typehinting
+	 */
+	public function compile($string, $name = null) {
+		return $this->_compile($string, $name);
 	}
 
 	/**
@@ -41,19 +52,6 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 	 * @todo missing typehinting
 	 */
 	protected function _prepareCompile($string) {
-		/**
-		 * Change the initial value of a less constant before compiling the file
-		 */
-		if(is_array($this->overrides)) {
-			foreach($this->overrides as $key => $value) {
-				$string = preg_replace(
-					'/@' . $key . ':(.*);/U',
-					 '@' . $key . ': ' . $value . ';',
-					 $string,
-					 1
-				);
-			}
-		}
 		return $string;
 	}
 
@@ -66,14 +64,21 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 	 */
 	protected function _compileFile($inputFilename, $preparedFilename, $outputFilename, $cacheFilename) {
 		try {
-			$this->parser->setImportDirs(
-				array(
+			$options = array(
+				'import_dirs' => array(
 					dirname($inputFilename) => dirname($inputFilename),
 					PATH_site               => PATH_site
-				)
+				),
+				'cache_dir' => t3lib_div::getFileAbsFileName('typo3temp/DynCss/Cache')
 			);
-			$this->parser->parseFile($preparedFilename);
-			return $this->parser->getCss();
+
+			$files = array(
+				$inputFilename => ''
+			);
+
+			$compiledFile = $options['cache_dir'] . '/' . Less_Cache::Get($files, $options, $this->overrides);
+
+			return file_get_contents($compiledFile);
 		} catch(Exception $e) {
 			return $e;
 		}
