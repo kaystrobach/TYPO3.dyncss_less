@@ -1,7 +1,9 @@
 <?php
 
 /**
- * @todo missing docblock
+ * Class tx_DyncssLess_Parser
+ *
+ * Adapts the Less.php Parser to compile less files
  */
 class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 
@@ -26,9 +28,7 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 	/**
 	 * @param $string
 	 * @param null $name
-	 * @return mixed
-	 *
-	 * @todo add typehinting
+	 * @return string
 	 */
 	public function compile($string, $name = null) {
 		return $this->_compile($string, $name);
@@ -37,9 +37,7 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 	/**
 	 * @param $string
 	 * @param null $name
-	 * @return mixed
-	 *
-	 * @todo missing typehinting
+	 * @return string
 	 */
 	protected function _compile($string, $name = null) {
 		// TODO: Implement _compile() method.
@@ -49,7 +47,7 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 	 * @param $string
 	 * @return mixed
 	 *
-	 * @todo missing typehinting
+	 * @return string
 	 */
 	protected function _prepareCompile($string) {
 		return $string;
@@ -60,7 +58,7 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 	 * @param $outputFilename
 	 * @param $cacheFilename
 	 *
-	 * @todo missing typehinting
+	 * @return string
 	 */
 	protected function _compileFile($inputFilename, $preparedFilename, $outputFilename, $cacheFilename) {
 		try {
