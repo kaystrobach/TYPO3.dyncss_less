@@ -1,3 +1,3 @@
 <?php
 
-tx_DynCss_Configuration_BeRegistry::get()->registerFileHandler('less', 'tx_DyncssLess_Parser');
+\KayStrobach\Dyncss\Configuration\BeRegistry::get()->registerFileHandler('less', 'KayStrobach\DyncssLess\Parser\LessParser');

@@ -1,17 +1,21 @@
 <?php
 
+namespace KayStrobach\DyncssLess\Parser;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Class tx_DyncssLess_Parser
  *
  * Adapts the Less.php Parser to compile less files
  */
-class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
+class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser{
 
 	function __construct() {
 		// ensure no one else has loaded lessc already ;)
 		if(!class_exists('Less_Cache')) {
-			require_once(t3lib_extMgm::extPath('dyncss_less') . 'Resources/Private/Php/less.php/Autoloader.php');
-			Less_Autoloader::register();
+			require_once(ExtensionManagementUtility::extPath('dyncss_less') . 'Resources/Private/Php/less.php/Autoloader.php');
+			\Less_Autoloader::register();
 		}
 
 		$config = array(
@@ -67,17 +71,17 @@ class tx_DyncssLess_Parser extends tx_Dyncss_Parser_AbstractParser{
 					dirname($inputFilename) => dirname($inputFilename),
 					PATH_site               => PATH_site
 				),
-				'cache_dir' => t3lib_div::getFileAbsFileName('typo3temp/DynCss/Cache')
+				'cache_dir' => GeneralUtility::getFileAbsFileName('typo3temp/DynCss/Cache')
 			);
 
 			$files = array(
 				$inputFilename => ''
 			);
 
-			$compiledFile = $options['cache_dir'] . '/' . Less_Cache::Get($files, $options, $this->overrides);
+			$compiledFile = $options['cache_dir'] . '/' . \Less_Cache::Get($files, $options, $this->overrides);
 
 			return file_get_contents($compiledFile);
-		} catch(Exception $e) {
+		} catch(\Exception $e) {
 			return $e;
 		}
 	}
