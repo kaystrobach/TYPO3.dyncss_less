@@ -12,18 +12,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser{
 
 	function __construct() {
+		parent::__construct();
+
 		// ensure no one else has loaded lessc already ;)
 		if(!class_exists('Less_Cache')) {
 			require_once(ExtensionManagementUtility::extPath('dyncss_less') . 'Resources/Private/Php/less.php/Autoloader.php');
 			\Less_Autoloader::register();
-		}
-
-		$config = array(
-			//'cache_dir'=>'/var/www/writable_folder',
-		);
-
-		if($this->config['enableDebug']) {
-			$config['sourceMap'] = TRUE;
 		}
 
 		$this->parser = NULL;
@@ -73,6 +67,10 @@ class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser{
 				),
 				'cache_dir' => GeneralUtility::getFileAbsFileName('typo3temp/DynCss/Cache')
 			);
+
+			if($this->config['enableDebugMode']) {
+				$options['sourceMap'] = TRUE;
+			}
 
 			$files = array(
 				$inputFilename => ''
