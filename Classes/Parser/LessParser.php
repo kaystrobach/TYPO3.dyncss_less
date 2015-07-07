@@ -11,6 +11,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser{
 
+	/**
+	 *
+	 */
 	function __construct() {
 		parent::__construct();
 
@@ -21,6 +24,10 @@ class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser{
 		}
 
 		$this->parser = NULL;
+	}
+
+	public function getVersion() {
+		return \Less_Version::version . ' - compat less.js version ' . \Less_Version::less_version;
 	}
 
 	/**
