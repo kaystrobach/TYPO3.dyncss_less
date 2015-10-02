@@ -78,6 +78,7 @@ class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser{
 			if($this->config['enableDebugMode']) {
 				$options['sourceMap'] = TRUE;
 			}
+			$options['relativeUrls'] = FALSE;
 
 			$files = array(
 				$inputFilename => ''
@@ -88,6 +89,57 @@ class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser{
 			return file_get_contents($compiledFile);
 		} catch(\Exception $e) {
 			return $e;
+		}
+	}
+
+	/**
+	 * Fixes pathes to compliant with original location of the file.
+	 *
+	 * @param $string
+	 * @return mixed
+	 *
+	 * @todo add typehinting
+	 */
+	public function _postCompile($string) {
+		/**
+		 * $relativePath seems to be unused?
+		 * @todo missing declaration of inputFilename
+		 */
+		$relativePath = dirname(substr($this->inputFilename, strlen(PATH_site))) . '/';
+
+		/**
+		 * @todo missing declaration of $matches
+		 */
+		preg_match_all('|url[\s]*\([\s]*(?<url>[^\)]*)[\s]*\)[\s]*|Ui', $string, $matches, PREG_SET_ORDER);
+
+		if(is_array($matches) && count($matches)) {
+			foreach($matches as $key => $value) {
+				$url = trim($value['url'], '\'"');
+				$newPath = $this->resolveUrlInCss($url);
+				$string = preg_replace('|'.preg_quote($url).'|', $newPath, $string, 1);
+			}
+		}
+		return $string;
+	}
+
+	/**
+	 * fixes URLs for use in CSS files
+	 *
+	 * @param $url
+	 * @return string
+	 *
+	 * @todo add typehinting
+	 */
+	public function resolveUrlInCss($url) {
+		if(strpos($url, '://') !== FALSE) {
+			// http://, ftp:// etc. urls leave untouched
+			return $url;
+		} elseif(substr($url, 0, 1) === '/') {
+			// absolute path, should not be touched
+			return $url;
+		} else {
+			// anything inside TYPO3 has to be adjusted
+			return '../../' . dirname($this->removePrefixFromString(PATH_site, $this->inputFilename)) . '/' . $url;
 		}
 	}
 
