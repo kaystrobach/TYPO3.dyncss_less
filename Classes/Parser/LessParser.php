@@ -31,6 +31,22 @@ class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser{
 	}
 
 	/**
+	 * returns the homepage of the parser
+	 * @return string
+	 */
+	public function getParserHomepage() {
+		return 'http://lessphp.gpeasy.com';
+	}
+
+	/**
+	 * return readable name of the project
+	 * @return string
+	 */
+	public function getParserName() {
+		return 'Less.php';
+	}
+
+	/**
 	 * @param $string
 	 * @param null $name
 	 * @return string
