@@ -16,7 +16,7 @@
     "typo3-ter/dyncss_less": "self.version"
   },
   "autoload": {
-    "psr-0": {
+    "psr-4": {
       "KayStrobach\\DyncssLess\\": "Classes/"
     }
   },
