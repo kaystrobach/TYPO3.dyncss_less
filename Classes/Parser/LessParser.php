@@ -93,6 +93,8 @@ class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser{
 
 			if($this->config['enableDebugMode']) {
 				$options['sourceMap'] = TRUE;
+				$options['sourceMapRootpath'] = '/';
+				$options['sourceMapBasepath'] = GeneralUtility::getIndpEnv('TYPO3_DOCUMENT_ROOT');
 			}
 
 			$files = array(
