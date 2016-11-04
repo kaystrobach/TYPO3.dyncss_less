@@ -1,0 +1,16 @@
+{
+	"name": "typo3-themes/dyncss-less",
+	"type": "typo3-cms-extension",
+	"description": "TYPO3 LESS-parser for dyncss.",
+	"version": "0.7.1",
+	"homepage": "http://typo3-themes.org",
+	"license": ["GPL-2.0+"],
+	"keywords": ["TYPO3 CMS", "DYNCSS", "PARSER", "SCSS"],
+	"support": {
+		"issues": "https://forge.typo3.org/projects/extension-dyncss/issues"
+	},
+	"replace": {
+		"dyncss_less": "self.version",
+		"typo3-ter/dyncss_less": "self.version"
+	}
+}
