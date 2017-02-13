@@ -1,0 +1,31 @@
+{
+  "name": "kaystrobach/dyncss-less",
+  "description": "DynCss-Parser",
+  "type": "typo3-cms-extension",
+  "version": "0.7.6",
+  "require": {
+    "typo3/cms-core": ">=6.2.0,<8.0",
+    "kaystrobach/dyncss": "*"
+  },
+  "require-dev": {
+    "typo3/cms": "^7.6",
+    "kaystrobach/dyncss": "^0.7.8"
+  },
+  "replace": {
+    "dyncss_less": "self.version",
+    "typo3-ter/dyncss_less": "self.version"
+  },
+  "autoload": {
+    "psr-4": {
+      "KayStrobach\\DyncssLess\\": "Classes/"
+    }
+  },
+  "keywords": ["dyncss", "less"],
+  "homepage": "http://donate.kay-strobach.de/",
+  "extra": {
+    "typo3/cms": {
+      "cms-package-dir": "{$vendor-dir}/typo3/cms",
+      "web-dir": ".Build/Web"
+    }
+  }
+}
