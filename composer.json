@@ -2,7 +2,6 @@
   "name": "kaystrobach/dyncss-less",
   "description": "DynCss-Parser",
   "type": "typo3-cms-extension",
-  "version": "0.7.8",
   "require": {
     "typo3/cms-core": ">=7.6.15,<8.7",
     "kaystrobach/dyncss": "*"
