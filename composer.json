@@ -2,14 +2,14 @@
   "name": "kaystrobach/dyncss-less",
   "description": "DynCss-Parser",
   "type": "typo3-cms-extension",
-  "version": "0.7.6",
+  "version": "0.7.8",
   "require": {
-    "typo3/cms-core": ">=6.2.0,<8.0",
+    "typo3/cms-core": ">=7.6.15,<8.7",
     "kaystrobach/dyncss": "*"
   },
   "require-dev": {
-    "typo3/cms": "^7.6",
-    "kaystrobach/dyncss": "^0.7.8"
+    "typo3/cms": "^8.6",
+    "kaystrobach/dyncss": "^0.8.0"
   },
   "replace": {
     "dyncss_less": "self.version",
