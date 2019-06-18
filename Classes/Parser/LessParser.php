@@ -121,6 +121,6 @@ class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser
 
     protected function _checkIfCompileNeeded($inputFilename)
     {
-        return true;
+        return false;
     }
 }
