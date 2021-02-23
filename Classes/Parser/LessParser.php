@@ -2,6 +2,7 @@
 
 namespace KayStrobach\DyncssLess\Parser;
 
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -96,7 +97,7 @@ class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser
             $options = array(
                 'import_dirs' => array(
                     dirname($inputFilename) => dirname($inputFilename),
-                    PATH_site               => PATH_site
+                    Environment::getPublicPath() . '/'               => Environment::getPublicPath() . '/'
                 ),
                 'cache_dir' => GeneralUtility::getFileAbsFileName('typo3temp/DynCss/Cache')
             );
