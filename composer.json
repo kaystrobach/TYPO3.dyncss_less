@@ -11,7 +11,7 @@
     "kaystrobach/dyncss": "*"
   },
   "replace": {
-    "dyncss_less": "self.version",
+    "kaystrobach/dyncss_less": "self.version",
     "typo3-ter/dyncss_less": "self.version"
   },
   "autoload": {
@@ -24,7 +24,8 @@
   "extra": {
     "typo3/cms": {
       "cms-package-dir": "{$vendor-dir}/typo3/cms",
-      "web-dir": ".Build/Web"
+      "web-dir": ".Build/Web",
+      "extension-key": "dyncss_less"
     }
   }
 }
