@@ -13,6 +13,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser
 {
+    protected $parser;
 
     /**
      *
