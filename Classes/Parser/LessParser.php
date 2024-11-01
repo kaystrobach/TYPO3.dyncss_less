@@ -99,7 +99,7 @@ class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser
                 'cache_dir' => GeneralUtility::getFileAbsFileName('typo3temp/DynCss/Cache')
             );
 
-            if ($this->config['enableDebugMode']) {
+            if (isset($this->config['enableDebugMode']) && ($this->config['enableDebugMode'])) {
                 $options['sourceMap'] = true;
                 $options['sourceMapRootpath'] = '/';
                 $options['sourceMapBasepath'] = GeneralUtility::getIndpEnv('TYPO3_DOCUMENT_ROOT');
@@ -109,7 +109,9 @@ class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser
                 $inputFilename => ''
             );
 
+            $errorHandling = error_reporting(0);
             $compiledFile = $options['cache_dir'] . '/' . \Less_Cache::Get($files, $options, $this->overrides);
+            error_reporting($errorHandling);
 
             return file_get_contents($compiledFile);
         } catch (\Exception $e) {
