@@ -13,7 +13,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser
 {
-
     /**
      *
      */
@@ -26,8 +25,6 @@ class LessParser extends \KayStrobach\Dyncss\Parser\AbstractParser
             require_once(ExtensionManagementUtility::extPath('dyncss_less') . 'Resources/Private/Php/less.php/Autoloader.php');
             \Less_Autoloader::register();
         }
-
-        $this->parser = null;
     }
 
     public function getVersion()
