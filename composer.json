@@ -24,7 +24,11 @@
     "typo3/cms": {
       "cms-package-dir": "{$vendor-dir}/typo3/cms",
       "web-dir": ".Build/Web",
-      "extension-key": "dyncss_less"
+      "extension-key": "dyncss_less",
+      "version": "0.7.9",
+      "Package": {
+        "providesPackages": {}
+      }
     }
   }
 }

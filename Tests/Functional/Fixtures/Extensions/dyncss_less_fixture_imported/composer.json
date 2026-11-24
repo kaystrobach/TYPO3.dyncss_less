@@ -1,0 +1,8 @@
+{
+    "name": "kaystrobach/dyncss-less-fixture-imported",
+    "type": "typo3-cms-extension",
+    "description": "Test fixture of dyncss_less",
+    "license": "GPL-2.0-or-later",
+    "require": {"kaystrobach/dyncss-less": "*"},
+    "extra": {"typo3/cms": {"extension-key": "dyncss_less_fixture_imported", "version": "1.0.0", "Package": {"providesPackages": {}}}}
+}

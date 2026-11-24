@@ -37,3 +37,13 @@ A less error does not break the page: the generated stylesheet contains the erro
 ```css
 /* variable @brand-color is undefined in file …/variables.less in variables.less on line 12, column 8 */
 ```
+
+## Tests
+
+Functional tests in docker against TYPO3 12, 13 and 14, with the dyncss clone next to this one (`../dyncss`, otherwise
+the branch `typo3-12-13-14` from GitHub):
+
+    Build/Scripts/runTests.sh -t 12                     # TYPO3 12, also 13 or 14, bundled less.php
+    LESS_PHP=wikimedia Build/Scripts/runTests.sh -t 12  # with wikimedia/less.php
+    Build/Scripts/runTests.sh -a                        # all versions
+
