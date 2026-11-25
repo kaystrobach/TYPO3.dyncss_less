@@ -27,6 +27,7 @@ class LessParserTest extends FunctionalTestCase
 
     protected function tearDown(): void
     {
+        GeneralUtility::rmdir(Environment::getPublicPath() . '/typo3temp/assets/DynCss', true);
         GeneralUtility::rmdir(Environment::getPublicPath() . '/typo3temp/DynCss', true);
         parent::tearDown();
     }
